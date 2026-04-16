@@ -1,4 +1,3 @@
-import { APP_SETTINGS_CONSTANTS } from "~/services/Settings/config";
 import {
   type AnyStroke,
   type AnyStrokeGroup,
@@ -14,7 +13,6 @@ import { type Tool, type ToolConfigs } from "~/types/tools";
 export class StrokeHistory {
   groups: AnyStrokeGroup[] = [];
   currentIndex = -1;
-  maxHistory = APP_SETTINGS_CONSTANTS.MAX_HISTORY;
 
   // Current stroke tracking (not yet committed to history)
   // We use a looser type internally while building the group
@@ -121,11 +119,6 @@ export class StrokeHistory {
     // 2. Add new group
     // We cast here because we assume the group is homogeneous by usage
     newGroups.push(this.currentGroup as unknown as AnyStrokeGroup);
-
-    // 3. Enforce Max History (Queue behavior)
-    if (newGroups.length > this.maxHistory) {
-      newGroups.shift();
-    }
 
     this.groups = newGroups;
     this.currentIndex = newGroups.length - 1;

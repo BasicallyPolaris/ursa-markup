@@ -1,28 +1,20 @@
-/**
- * DocumentContext - Bridges active Document with React
- */
-
-import React, {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
-import { CanvasEngine, Document, Ruler, StrokeHistory } from "~/core";
+import React, { useRef } from "react";
+import type { CanvasEngine, Document, Ruler, StrokeHistory } from "~/core";
+import { useDocumentStore } from "~/stores/useDocumentStore";
 import type { Point } from "~/types";
 import type { Tool, ToolConfigs } from "~/types/tools";
-import { useCanvasEngine } from "./CanvasEngineContext";
+
+type StrokeHistorySnapshot = {
+  groups: StrokeHistory["groups"];
+  currentIndex: number;
+  canUndo: boolean;
+  canRedo: boolean;
+};
 
 type DocumentContextValue = {
   document: Document;
   engine: CanvasEngine | null;
-  strokeHistory: {
-    groups: StrokeHistory["groups"];
-    currentIndex: number;
-    canUndo: boolean;
-    canRedo: boolean;
-  };
+  strokeHistory: StrokeHistorySnapshot;
   ruler: Ruler;
   startStrokeGroup: () => void;
   startStroke: <T extends Tool>(
@@ -48,8 +40,6 @@ type DocumentContextValue = {
   stretchToFill: (width: number, height: number) => void;
 };
 
-const DocumentContext = createContext<DocumentContextValue | null>(null);
-
 type DocumentProviderProps = {
   document: Document;
   children: React.ReactNode;
@@ -59,146 +49,21 @@ export function DocumentProvider({
   document,
   children,
 }: DocumentProviderProps) {
-  const [, forceUpdate] = useState({});
-  const { engine } = useCanvasEngine();
+  const prevDocIdRef = useRef<string | null>(null);
 
-  // Subscribe to document changes
-  useEffect(() => {
-    let mounted = true;
+  if (prevDocIdRef.current !== document.id) {
+    prevDocIdRef.current = document.id;
+    useDocumentStore.getState().initDocument(document);
+  }
 
-    const handleChange = () => {
-      if (mounted) {
-        forceUpdate({});
-      }
-    };
+  return <>{children}</>;
+}
 
-    document.onChange(handleChange);
+export function useDocument(): DocumentContextValue {
+  const state = useDocumentStore();
+  const { document, engine } = state;
 
-    return () => {
-      mounted = false;
-      document.offChange(handleChange);
-    };
-  }, [document]);
-
-  // Stroke history actions
-  const startStrokeGroup = useCallback(() => {
-    document.strokeHistory.startGroup();
-  }, [document]);
-
-  const startStroke = useCallback(
-    <T extends Tool>(
-      tool: T,
-      toolConfig: ToolConfigs[T],
-      color: string,
-      point: Point,
-    ) => {
-      document.strokeHistory.startStroke(tool, toolConfig, color, point);
-    },
-    [document],
-  );
-
-  const addPointToStroke = useCallback(
-    (point: Point) => {
-      document.strokeHistory.addPoint(point);
-    },
-    [document],
-  );
-
-  const endStrokeGroup = useCallback(() => {
-    document.strokeHistory.endGroup();
-  }, [document]);
-
-  const abortStrokeGroup = useCallback(() => {
-    document.strokeHistory.abortGroup();
-    forceUpdate({});
-  }, [document]);
-
-  const undo = useCallback(() => {
-    if (document.strokeHistory.canUndo()) {
-      document.strokeHistory.undo();
-      engine?.replayStrokes({
-        groups: document.strokeHistory.groups,
-        currentIndex: document.strokeHistory.currentIndex,
-      }, (changed) => document.markAsChanged(changed));
-    }
-  }, [document, engine]);
-
-  const redo = useCallback(() => {
-    if (document.strokeHistory.canRedo()) {
-      document.strokeHistory.redo();
-      engine?.replayStrokes({
-        groups: document.strokeHistory.groups,
-        currentIndex: document.strokeHistory.currentIndex,
-      }, (changed) => document.markAsChanged(changed));
-    }
-  }, [document, engine]);
-
-  // Ruler actions
-  const toggleRuler = useCallback(() => {
-    document.ruler.toggle();
-    forceUpdate({});
-  }, [document]);
-
-  const showRuler = useCallback(() => {
-    document.ruler.show();
-    forceUpdate({});
-  }, [document]);
-
-  const hideRuler = useCallback(() => {
-    document.ruler.hide();
-    forceUpdate({});
-  }, [document]);
-
-  const setRulerAngle = useCallback(
-    (angle: number) => {
-      document.ruler.setAngle(angle);
-      forceUpdate({});
-    },
-    [document],
-  );
-
-  const rotateRuler = useCallback(
-    (delta: number) => {
-      document.ruler.rotate(delta);
-    },
-    [document],
-  );
-
-  const startDragRuler = useCallback(
-    (point: Point) => {
-      document.ruler.startDrag(point);
-      forceUpdate({});
-    },
-    [document],
-  );
-
-  const endDragRuler = useCallback(() => {
-    document.ruler.endDrag();
-    forceUpdate({});
-  }, [document]);
-
-  const dragRulerTo = useCallback(
-    (point: Point) => {
-      document.ruler.dragTo(point);
-    },
-    [document],
-  );
-
-  const autoCenter = useCallback(
-    (width: number, height: number) => {
-      document.autoCenter(width, height);
-    },
-    [document],
-  );
-
-  const stretchToFill = useCallback(
-    (width: number, height: number) => {
-      document.stretchToFill(width, height);
-    },
-    [document],
-  );
-
-  const value: DocumentContextValue = {
+  return {
     document,
     engine,
     strokeHistory: {
@@ -208,38 +73,22 @@ export function DocumentProvider({
       canRedo: document.strokeHistory.canRedo(),
     },
     ruler: document.ruler,
-    startStrokeGroup,
-    startStroke,
-    addPointToStroke,
-    endStrokeGroup,
-    abortStrokeGroup,
-    undo,
-    redo,
-    toggleRuler,
-    showRuler,
-    hideRuler,
-    rotateRuler,
-    setRulerAngle,
-    startDragRuler,
-    dragRulerTo,
-    endDragRuler,
-    autoCenter,
-    stretchToFill,
+    startStrokeGroup: state.startStrokeGroup,
+    startStroke: state.startStroke,
+    addPointToStroke: state.addPointToStroke,
+    endStrokeGroup: state.endStrokeGroup,
+    abortStrokeGroup: state.abortStrokeGroup,
+    undo: state.undo,
+    redo: state.redo,
+    toggleRuler: state.toggleRuler,
+    showRuler: state.showRuler,
+    hideRuler: state.hideRuler,
+    rotateRuler: state.rotateRuler,
+    setRulerAngle: state.setRulerAngle,
+    startDragRuler: state.startDragRuler,
+    dragRulerTo: state.dragRulerTo,
+    endDragRuler: state.endDragRuler,
+    autoCenter: state.autoCenter,
+    stretchToFill: state.stretchToFill,
   };
-
-  return (
-    <DocumentContext.Provider value={value}>
-      {children}
-    </DocumentContext.Provider>
-  );
 }
-
-export function useDocument(): DocumentContextValue {
-  const context = useContext(DocumentContext);
-  if (!context) {
-    throw new Error("useDocument must be used within a DocumentProvider");
-  }
-  return context;
-}
-
-export { DocumentContext };

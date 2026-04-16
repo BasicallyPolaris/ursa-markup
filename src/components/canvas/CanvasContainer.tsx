@@ -8,6 +8,7 @@ import React, {
 } from "react";
 import { useCanvasEngine } from "~/contexts/CanvasEngineContext";
 import { useDocument } from "~/contexts/DocumentContext";
+import { useDocumentStore } from "~/stores/useDocumentStore";
 import { useDrawing } from "~/contexts/DrawingContext";
 import { useSettings } from "~/contexts/SettingsContext";
 import { registerPendingCopy } from "~/hooks/useClipboardEvents";
@@ -139,6 +140,12 @@ export function CanvasContainer({
     toolConfig,
     activeColor,
   ]);
+
+  // --- Sync engine to zustand store ---
+  useEffect(() => {
+    useDocumentStore.getState().setEngine(engine);
+    return () => useDocumentStore.getState().setEngine(null);
+  }, [engine]);
 
   // --- Ruler Visibility Change ---
   useEffect(() => {

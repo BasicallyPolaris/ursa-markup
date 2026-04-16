@@ -14,7 +14,6 @@ export {
   useTabManager,
 } from "./TabManagerContext";
 export {
-  DocumentContext,
   DocumentProvider,
   useDocument,
 } from "./DocumentContext";
