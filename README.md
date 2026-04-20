@@ -5,13 +5,13 @@
 **A cross-platform image annotation tool inspired by the Windows Snipping Tool.**
 Built with Tauri, React, and TypeScript.
 
-[![Build Status](https://img.shields.io/github/actions/workflow/status/BasicallyPolaris/Ursa-Markup/release.yml?style=flat-square)](https://github.com/BasicallyPolaris/Ursa-Markup/actions)
-[![License](https://img.shields.io/github/license/BasicallyPolaris/Ursa-Markup?style=flat-square)](LICENSE)
-[![Version](https://img.shields.io/github/v/release/BasicallyPolaris/Ursa-Markup?style=flat-square)](https://github.com/BasicallyPolaris/Ursa-Markup/releases)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/BasicallyPolaris/ursa-markup/release.yml?style=flat-square)](https://github.com/BasicallyPolaris/ursa-markup/actions)
+[![License](https://img.shields.io/github/license/BasicallyPolaris/ursa-markup?style=flat-square)](LICENSE)
+[![Version](https://img.shields.io/github/v/release/BasicallyPolaris/ursa-markup?style=flat-square)](https://github.com/BasicallyPolaris/ursa-markup/releases)
 
 <img src=".github/assets/screenshot-main.png" alt="Ursa Markup Interface" width="100%" />
 
-[**Download Latest Release**](https://github.com/BasicallyPolaris/Ursa-Markup/releases)
+[**Download Latest Release**](https://github.com/BasicallyPolaris/ursa-markup/releases)
 
 </div>
 
@@ -59,7 +59,7 @@ Ursa Markup is highly customizable. You can tweak tool behaviors, themes, and sh
 
 ### Windows, macOS, Linux
 
-Go to the [**Releases Page**](https://github.com/BasicallyPolaris/Ursa-Markup/releases) and download the installer for your operating system:
+Go to the [**Releases Page**](https://github.com/BasicallyPolaris/ursa-markup/releases) and download the installer for your operating system:
 
 - **Windows**: `.exe` or `.msi`
 - **macOS**: `.dmg` or `.app`
@@ -122,8 +122,8 @@ bun run tauri build
 
 ```bash
 # 1. Clone the repo
-git clone [https://github.com/BasicallyPolaris/Ursa-Markup.git](https://github.com/BasicallyPolaris/Ursa-Markup.git)
-cd Ursa-Markup
+git clone [https://github.com/BasicallyPolaris/ursa-markup.git](https://github.com/BasicallyPolaris/ursa-markup.git)
+cd ursa-markup
 
 # 2. Install dependencies
 bun install

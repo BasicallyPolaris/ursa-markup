@@ -26,8 +26,8 @@ Before diving in, please note the core technologies used:
 1.  **Clone the repository**
 
     ```bash
-    git clone [https://github.com/BasicallyPolaris/Ursa-Markup.git](https://github.com/BasicallyPolaris/Ursa-Markup.git)
-    cd Ursa-Markup
+    git clone [https://github.com/BasicallyPolaris/ursa-markup.git](https://github.com/BasicallyPolaris/ursa-markup.git)
+    cd ursa-markup
     ```
 
 2.  **Install dependencies**
