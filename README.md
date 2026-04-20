@@ -9,11 +9,11 @@ Built with Tauri, React, and TypeScript.
 [![License](https://img.shields.io/github/license/BasicallyPolaris/ursa-markup?style=flat-square)](LICENSE)
 [![Version](https://img.shields.io/github/v/release/BasicallyPolaris/ursa-markup?style=flat-square)](https://github.com/BasicallyPolaris/ursa-markup/releases)
 
-[![Support me on Ko-fi](https://storage.ko-fi.com/cdn/brandasset/v2/support_me_on_kofi_blue.png)](https://ko-fi.com/basicallypolaris)
-
 <img src=".github/assets/screenshot-main.png" alt="Ursa Markup Interface" width="100%" />
 
 [**Download Latest Release**](https://github.com/BasicallyPolaris/ursa-markup/releases)
+
+[![Support me on Ko-fi](https://storage.ko-fi.com/cdn/brandasset/v2/support_me_on_kofi_blue.png)](https://ko-fi.com/basicallypolaris)
 
 </div>
 
